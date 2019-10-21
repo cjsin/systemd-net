@@ -1,0 +1,12 @@
+[Unit]
+Requires=network.target
+Before=docker.service
+After=network.target
+Before=shutdown.target
+
+[Service]
+RemainAfterExit=true
+ExecStart=
+ExecStop=-/bin/bash -c "echo Docker has stopped > /dev/tty1; echo Pausing a little; sleep 10"
+
+

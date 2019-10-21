@@ -157,9 +157,13 @@ enable-and-start docker
 
 sleep 3
 
+
 verb "Setup a long running docker service"
 # Pre-pull the image
 docker images | grep -q busybox || docker pull busybox:latest
 install -m 755 long-runner.sh /root
 install -m 644 long-runner.service /etc/systemd/system
 enable-and-start long-runner.service
+
+install -m 644 docker-stopped.service /etc/systemd/system
+enable-and-start docker-stopped.service
