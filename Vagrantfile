@@ -35,7 +35,7 @@ Vagrant.configure("2") do |config|
     config.vm.provider "libvirt" do |v|
         v.nic_model_type = 'e1000'
         v.memory         = 1024
-        v.graphics_port  = 5901
+        v.graphics_port  = 5902
         v.graphics_ip    = '0.0.0.0'
         v.video_type     = 'qxl'
         v.input :type => "tablet", :bus => "usb"
