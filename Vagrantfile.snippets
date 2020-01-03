@@ -1,0 +1,141 @@
+    #config.vm.synced_folder './', '/vagrant', type: 'nfs', disabled: true
+    #config.vm.synced_folder SRCS, VAGRANT_HOME, type: '9p', disabled: false, accessmode: "squash", owner: "1000"
+
+    #config.vm.synced_folder SRCS, VAGRANT_HOME, type: "rsync", rsync__exclude: ".git/"
+    #config.vm.synced_folder SRCS, VAGRANT_HOME, type: '9p', disabled: false, accessmode: "mapped", mount: false
+
+
+    #config.vm.network "private_network", ip: "192.168.33.10"
+    #config.vm.network "public_network"
+
+    # Public network configuration using existing network device
+    # Note: Private networks do not work with QEMU session enabled as root access is required to create new network devices
+    #config.vm.network :public_network, :dev => "virbr1",
+    #    :mode => "bridge",
+    #    :type => "bridge"
+
+    #For 9p shares, a mount: false option allows to define synced folders without mounting them at boot.
+    #config.vm.network :forwarded_port, guest: 80, host: 2000
+
+    #Externally Accessible Port Forward
+    #config.vm.network :forwarded_port, guest: 80, host: 2000, host_ip: "0.0.0.0"
+
+    # pxeclient.vm.network :private_network,ip: '10.0.0.5',
+    #        libvirt__network_name: "foreman_managed",
+    #        libvirt__dhcp_enabled: false,
+    #        libvirt__host_ip: '10.0.0.1'
+
+    #   pxeclient.vm.provider :libvirt do |domain|
+    #     v.memory = 1000
+    #      boot_network = {'network' => 'foreman_managed'}
+    #     v.storage :file, :size => '100G', :type => 'qcow2'
+    #     v.boot boot_network
+    #     v.boot 'hd'
+    #    end
+
+    config.vm.provider "libvirt" do |v|
+        v.nic_model_type = 'e1000'
+        v.memory         = 1024
+        v.graphics_port  = 5901
+        v.graphics_ip    = '0.0.0.0'
+        v.video_type     = 'qxl'
+        # very useful when having mouse issues when viewing VM via VNC
+        v.input :type => "tablet", :bus => "usb"
+        v.cpus   = 1
+        # Pass through /dev/random from the host to the VM
+        v.random :model => 'random'
+        #v.boot 'network'
+        v.boot 'hd'
+        v.channel :type => 'unix', :target_name => 'org.qemu.guest_agent.0', :target_type => 'virtio'
+        v.channel :type => 'spicevmc', :target_name => 'com.redhat.spice.0', :target_type => 'virtio'
+
+        # use libvirt on a different host
+        #v.host           = "other-host"
+
+        # Use QEMU session instead of system connection
+        #v.qemu_use_session = true
+        # URI of QEMU session connection, default is as below
+        #v.uri = 'qemu:///session'
+        # URI of QEMU system connection, use to obtain IP address for management
+        #v.system_uri = 'qemu:///system'
+        # Path to store Libvirt images for the virtual machine, default is as ~/.local/share/libvirt/images
+        #v.storage_pool_path = '/home/user/.local/share/libvirt/images'
+        # Management network device
+        #v.management_network_device = 'virbr0'
+        #v.channel :type => 'unix', :target_type => 'guestfwd', :target_address => '192.0.2.42', :target_port => '4242',
+        #             :source_path => '/tmp/foo'
+
+        #v.qemuargs :value => "-device"
+        #v.qemuargs :value => "intel-iommu"
+
+        #v.tpm_model = 'tpm-tis'
+        #v.tpm_type = 'passthrough'
+        #v.tpm_path = '/dev/tpm0'
+
+        #v.storage :file, :size => '100G', :type => 'qcow2'
+
+        #v.memorybacking :hugepages
+        #v.memorybacking :nosharepages
+        #v.memorybacking :locked
+        #v.memorybacking :source, :type => 'file'
+        #v.memorybacking :access, :mode => 'shared'
+        #v.memorybacking :allocation, :mode => 'immediate'
+
+        # Specify the default hypervisor features
+        #v.features = ['acpi', 'apic', 'pae' ]
+
+        # Smartcards
+        #v.smartcard :mode => 'passthrough', :type => 'tcp', :source_mode => 'bind', :source_host => '127.0.0.1', :source_service => '2001'
+        #v.smartcard :mode => 'passthrough', :type => 'spicevmc'
+
+        # Add Libvirt watchdog device model i6300esb
+        #v.watchdog :model => 'i6300esb', :action => 'reset'
+
+        # The feature will not be supported by virtual CPU.
+        #v.cpu_feature :name => 'hypervisor', :policy => 'disable'
+
+        # Guest creation will fail unless the feature is supported by host CPU.
+        #v.cpu_feature :name => 'vmx', :policy => 'require'
+
+        # The virtual CPU will claim the feature is supported regardless of it being supported by host CPU.
+        #v.cpu_feature :name => 'pdpe1gb', :policy => 'force'
+
+        # Set up a USB3 controller
+        #v.usb_controller :model => "nec-xhci"
+
+        # Add a pci controller
+        #v.pci :bus => '0x06', :slot => '0x12', :function => '0x5'
+        # Add another one if it is neccessary
+        #v.pci :bus => '0x03', :slot => '0x00', :function => '0x0'
+
+        # this is the default
+        #     v.input :type => "mouse", :bus => "ps2"
+        #v.cpus = 4
+        #v.cputopology :sockets => '2', :cores => '2', :threads => '1'
+
+        #v.nested = true
+        #v.volume_cache = 'none'
+
+        #v.storage :file, :device => :cdrom, :path => '/path/to/iso1.iso'
+        #v.storage :file, :size => '20G', :path => 'my_shared_disk.img', :allow_existing => true, :shareable => true, :type => 'raw'
+        #v.storage :file, :size => '20G'
+        #v.storage :file, :size => '40G', :type => 'raw'
+
+        #v.redirdev :type => "spicevmc"
+        #v.redirfilter :class => "0x0b" :vendor => "0x08e6" :product => "0x3437" :version => "2.00" :allow => "yes"
+        #v.redirfilter :allow => "no"
+
+        # add two devices using spicevmc channel
+        #(1..2).each do
+        #    v.redirdev :type => "spicevmc"
+        #end
+
+        # add device, provided by localhost:4000
+        #v.redirdev :type => "tcp", :host => "localhost", :port => "4000"
+    end
+
+    # config.vm.provision "shell", inline: <<-SHELL
+    #   apt-get update
+    #   apt-get install -y apache2
+    # SHELL
+
